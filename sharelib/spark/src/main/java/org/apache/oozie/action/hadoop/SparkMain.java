@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class SparkMain extends LauncherMain {
     private static final String MASTER_OPTION = "--master";
@@ -43,11 +44,17 @@ public class SparkMain extends LauncherMain {
     private String sparkClasspath = null;
 
     public static void main(String[] args) throws Exception {
+        System.out.println("System Env Variable:");
+        Map<String,String> map = System.getenv();
+        for (Map.Entry<String,String> entry: map.entrySet()){
+            System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
         run(SparkMain.class, args);
     }
 
     @Override
     protected void run(String[] args) throws Exception {
+
         Configuration actionConf = loadActionConf();
         setYarnTag(actionConf);
         LauncherMainHadoopUtils.killChildYarnJobs(actionConf);
@@ -182,6 +189,7 @@ public class SparkMain extends LauncherMain {
         System.out.println(">>> Invoking Spark class now >>>");
         System.out.println();
         System.out.flush();
+
         SparkSubmit.main(args);
     }
 
@@ -210,7 +218,7 @@ public class SparkMain extends LauncherMain {
             }
         }
         for (String path : classpath) {
-            if (!path.startsWith("job.jar") && path.endsWith(".jar")) {
+            if (!path.startsWith("job.jar") && (path.endsWith(".jar")||path.endsWith(".py"))) {
                 String name = path.substring(path.lastIndexOf("/") + 1);
                 if (!distCacheJars.contains(name)) {
                     jars.append(path).append(",");

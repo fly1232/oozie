@@ -84,7 +84,7 @@ public class SharelibUtils {
         String[] jars = getSharelibJars(sharelib);
         List<Path> paths = new ArrayList<Path>();
         for (String jar : jars) {
-            if (jar.endsWith(".jar")) {
+            if (jar.endsWith(".jar")||jar.endsWith(".py")) {
                 Path targetPath = new Path(targetDir, new File(jar).getName());
                 InputStream is = new FileInputStream(jar);
                 OutputStream os = fs.create(targetPath);

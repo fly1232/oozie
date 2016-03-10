@@ -18,27 +18,6 @@
 
 package org.apache.oozie.action.hadoop;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.ConnectException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileStatus;
@@ -63,24 +42,24 @@ import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.command.coord.CoordActionStartXCommand;
 import org.apache.oozie.command.wf.ActionStartXCommand;
-import org.apache.oozie.service.ConfigurationService;
-import org.apache.oozie.service.HadoopAccessorException;
-import org.apache.oozie.service.HadoopAccessorService;
-import org.apache.oozie.service.Services;
-import org.apache.oozie.service.ShareLibService;
-import org.apache.oozie.service.URIHandlerService;
-import org.apache.oozie.service.WorkflowAppService;
-import org.apache.oozie.util.ELEvaluationException;
-import org.apache.oozie.util.ELEvaluator;
-import org.apache.oozie.util.JobUtils;
-import org.apache.oozie.util.LogUtils;
-import org.apache.oozie.util.PropertiesUtils;
-import org.apache.oozie.util.XConfiguration;
-import org.apache.oozie.util.XLog;
-import org.apache.oozie.util.XmlUtils;
+import org.apache.oozie.service.*;
+import org.apache.oozie.util.*;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.ConnectException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class JavaActionExecutor extends ActionExecutor {
@@ -586,7 +565,7 @@ public class JavaActionExecutor extends ActionExecutor {
                     uri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), uri.getQuery(), fileName);
                     DistributedCache.addCacheFile(uri.normalize(), conf);
                 }
-                else if (fileName.endsWith(".jar")) { // .jar files
+                else if (fileName.endsWith(".jar")||fileName.endsWith(".py")) { // .jar files or .py files
                     if (!fileName.contains("#")) {
                         String user = conf.get("user.name");
                         Path pathToAdd = new Path(uri.normalize());
